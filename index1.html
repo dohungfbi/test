@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cầu Nguyện</title>
+    <link rel="shortcut icon" type="image/jpg" href="folded-hands-emoji-clipart-md.jpg"/>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        input, textarea {
+            width: 90%;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trang Cầu Nguyện</h1>
+        <img src="temple.jpg" alt="Ngôi đền cầu nguyện">
+        <form id="prayerForm">
+            <input type="text" id="name" placeholder="Tên của bạn" required><br>
+            <textarea id="prayer" placeholder="Lời cầu nguyện của bạn" rows="5" required></textarea><br>
+            <button type="submit">Gửi</button>
+        </form>
+        <audio id="successAudio" src="sound.mp3" preload="auto"></audio>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const prayerForm = document.getElementById("prayerForm");
+            const audio = document.getElementById("successAudio");
+
+            prayerForm.addEventListener("submit", async (event) => {
+                event.preventDefault(); // Ngăn không tải lại trang
+
+                // Phát nhạc
+                try {
+                    await audio.play();
+                } catch (error) {
+                    console.error("Lỗi phát nhạc:", error);
+                }
+
+                // Gửi dữ liệu lên Google Forms
+                const name = document.getElementById("name").value;
+                const prayer = document.getElementById("prayer").value;
+                const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfHEufyP5mavmAiOYkz1hDGSP73ko2MPN3k8A0fdU_JNIOB_g/formResponse";
+                const formData = new FormData();
+
+                formData.append("entry.1758800674", name); // Thay đúng entry ID của Google Forms
+                formData.append("entry.2042826842", prayer);
+
+                try {
+                    const response = await fetch(formURL, {
+                        method: "POST",
+                        body: formData,
+                        mode: "no-cors", // Bắt buộc sử dụng vì Google Forms không hỗ trợ CORS
+                    });
+
+                    // Thông báo thành công
+                    alert("Cảm ơn bạn! Lời cầu nguyện của bạn đã được ghi nhận.");
+                } catch (error) {
+                    console.error("Lỗi gửi dữ liệu:", error);
+                    alert("Đã xảy ra lỗi khi gửi dữ liệu. Vui lòng thử lại sau.");
+                }
+
+                // Xóa dữ liệu form
+                prayerForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
